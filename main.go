@@ -29,7 +29,7 @@ func infoPage(w http.ResponseWriter, r *http.Request) {
 
 func barcodeDisplayer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	url := fmt.Sprintf("../../i/%s/%s.png", vars["type"], vars["data"])
+	url := fmt.Sprintf("../i/%s/%s.png", vars["type"], vars["data"])
 	page := fmt.Sprintf(
 		"<html><head></head><body><img src=\"%s\"/></body></html>",
 		html.EscapeString(url),
