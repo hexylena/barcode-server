@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+    "strconv"
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/code128"
+	"github.com/boombuler/barcode/qr"
 	"github.com/codegangsta/cli"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
@@ -22,6 +24,7 @@ func infoPage(w http.ResponseWriter, r *http.Request) {
         Supported Codes:
         <ul>
             <li><a href="code128/12345">Code128</a></li>
+            <li><a href="qr/12345?q=L">QR</a></li>
         </ul>
         </body></html>`,
 	)
@@ -39,12 +42,48 @@ func barcodeDisplayer(w http.ResponseWriter, r *http.Request) {
 
 func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+    width, err := strconv.Atoi(r.FormValue("w"))
+    if err != nil {
+        width = 200
+    }
+
+    height, err := strconv.Atoi(r.FormValue("h"))
+    if err != nil {
+        height = 200
+    }
+
 	if vars["type"] == "code128" {
 		qrcode, err := code128.Encode(vars["data"])
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			qrcode, err = barcode.Scale(qrcode, 220, 60)
+			qrcode, err = barcode.Scale(qrcode, width, height)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				png.Encode(w, qrcode)
+			}
+		}
+	} else if vars["type"] == "qr" {
+        qualityLevel := r.FormValue("q")
+        var encodingQuality qr.ErrorCorrectionLevel;
+
+        if qualityLevel == "M" {
+            encodingQuality = qr.M
+        } else if qualityLevel == "Q" {
+            encodingQuality = qr.Q
+        } else if qualityLevel == "H" {
+            encodingQuality = qr.H
+        } else {
+            // default to lowest setting
+            encodingQuality = qr.L
+        }
+
+		qrcode, err := qr.Encode(vars["data"], encodingQuality, qr.Auto)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			qrcode, err = barcode.Scale(qrcode, width, height)
 			if err != nil {
 				fmt.Println(err)
 			} else {
