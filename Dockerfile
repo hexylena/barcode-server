@@ -12,5 +12,5 @@ RUN wget https://github.com/erasche/barcode-server/archive/${GIT_REV}.tar.gz && 
     go get -v github.com/gorilla/mux && \
     go get -v github.com/gorilla/handlers
 
-CMD ["go" "run" "/app/main.go", "-l", "0.0.0.0:80"]
+CMD ["go", "run", "/app/main.go", "-l", "0.0.0.0:80"]
 
