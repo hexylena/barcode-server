@@ -2,18 +2,19 @@ package main
 
 import (
 	"fmt"
-    "strconv"
-	"github.com/boombuler/barcode"
-	"github.com/boombuler/barcode/code128"
-	"github.com/boombuler/barcode/qr"
-	"github.com/codegangsta/cli"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/handlers"
 	"html"
 	"image/png"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/code128"
+	"github.com/boombuler/barcode/qr"
+	"github.com/codegangsta/cli"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 func infoPage(w http.ResponseWriter, r *http.Request) {
@@ -42,15 +43,15 @@ func barcodeDisplayer(w http.ResponseWriter, r *http.Request) {
 
 func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-    width, err := strconv.Atoi(r.FormValue("w"))
-    if err != nil {
-        width = 200
-    }
+	width, err := strconv.Atoi(r.FormValue("w"))
+	if err != nil {
+		width = 200
+	}
 
-    height, err := strconv.Atoi(r.FormValue("h"))
-    if err != nil {
-        height = 200
-    }
+	height, err := strconv.Atoi(r.FormValue("h"))
+	if err != nil {
+		height = 200
+	}
 
 	if vars["type"] == "code128" {
 		qrcode, err := code128.Encode(vars["data"])
@@ -65,19 +66,19 @@ func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	} else if vars["type"] == "qr" {
-        qualityLevel := r.FormValue("q")
-        var encodingQuality qr.ErrorCorrectionLevel;
+		qualityLevel := r.FormValue("q")
+		var encodingQuality qr.ErrorCorrectionLevel
 
-        if qualityLevel == "M" {
-            encodingQuality = qr.M
-        } else if qualityLevel == "Q" {
-            encodingQuality = qr.Q
-        } else if qualityLevel == "H" {
-            encodingQuality = qr.H
-        } else {
-            // default to lowest setting
-            encodingQuality = qr.L
-        }
+		if qualityLevel == "M" {
+			encodingQuality = qr.M
+		} else if qualityLevel == "Q" {
+			encodingQuality = qr.Q
+		} else if qualityLevel == "H" {
+			encodingQuality = qr.H
+		} else {
+			// default to lowest setting
+			encodingQuality = qr.L
+		}
 
 		qrcode, err := qr.Encode(vars["data"], encodingQuality, qr.Auto)
 		if err != nil {
@@ -101,7 +102,7 @@ func serve(listenAddr string) {
 	r.HandleFunc("/{type}/{data}", barcodeDisplayer)
 	r.HandleFunc("/i/{type}/{data}.png", barcodeEncoder)
 	fmt.Printf("Listening on %s\n", listenAddr)
-    loggedRouter := handlers.LoggingHandler(os.Stdout, r)
+	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 	log.Fatal(http.ListenAndServe(listenAddr, loggedRouter))
 }
 
