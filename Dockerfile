@@ -2,7 +2,7 @@ FROM golang:1.5
 MAINTAINER Eric Rasche <esr@tamu.edu>
 EXPOSE 80
 
-ENV GIT_REV 542e61c8762779be48690d9e6a42523143ab9277
+ENV GIT_REV 93018954e78f7afc2157de9c4df7cc24afc1f333
 
 RUN wget https://github.com/erasche/barcode-server/archive/${GIT_REV}.tar.gz && \
     tar xvfz ${GIT_REV}.tar.gz && \
