@@ -17,9 +17,10 @@ import (
 )
 
 var (
-	version     = "1.1"
+	version     = "1.2"
 	hostname, _ = os.Hostname()
 	builddate   string
+	gitrev      string
 )
 
 func infoPage(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +108,7 @@ func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
 		encodingQuality := qrQuality(qualityLevel)
 
 		qrcode, err := qr.Encode(
-			fmt.Sprintf("barcode-server version:%s host:%s builddate:%s", version, hostname, builddate),
+			fmt.Sprintf("barcode-server version:v%s host:%s builddate:%s gitrev:%s", version, hostname, builddate, gitrev),
 			encodingQuality,
 			qr.Auto,
 		)
@@ -126,13 +127,13 @@ func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func serve(listenAddr string) {
+func serve(listenAddr, prefix string) {
 	r := mux.NewRouter()
-	r.HandleFunc("/", infoPage)
-	r.HandleFunc("/{type}/{data}", barcodeDisplayer)
-	r.HandleFunc("/i/{type}/{data}.png", barcodeEncoder)
-	r.HandleFunc("/healthcheck", healthCheck)
-	fmt.Printf("Listening on %s\n", listenAddr)
+	r.HandleFunc(prefix+"/", infoPage)
+	r.HandleFunc(prefix+"/{type}/{data}", barcodeDisplayer)
+	r.HandleFunc(prefix+"/i/{type}/{data}.png", barcodeEncoder)
+	r.HandleFunc(prefix+"/healthcheck", healthCheck)
+	fmt.Printf("Listening on %s%s\n", listenAddr, prefix)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 	log.Fatal(http.ListenAndServe(listenAddr, loggedRouter))
 }
@@ -149,9 +150,17 @@ func main() {
 			Value: "0.0.0.0:8080",
 			Usage: "Address to listen on",
 		},
+		cli.StringFlag{
+			Name:  "prefix, p",
+			Value: "/barcodes",
+			Usage: "URL Path prefix",
+		},
 	}
 	app.Action = func(c *cli.Context) {
-		serve(c.String("listen"))
+		serve(
+			c.String("listen"),
+			c.String("prefix"),
+		)
 	}
 
 	err := app.Run(os.Args)

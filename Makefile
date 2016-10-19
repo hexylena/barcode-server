@@ -1,6 +1,7 @@
 SRC := $(wildcard *.go)
 TARGET := barcode-server
 VERSION := $(shell git describe --tags)
+GITREV := $(shell git rev-parse --short HEAD)
 
 all: $(TARGET)
 
@@ -43,7 +44,7 @@ release:
 	mkdir dist
 	go get github.com/mitchellh/gox
 	go get github.com/tcnksm/ghr
-	CGO_ENABLED=0 gox -ldflags "-X main.version=$(VERSION) -X main.builddate=`date -u +%Y-%m-%dT%H:%M:%SZ`" -output "dist/$(TARGET)-{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
+	CGO_ENABLED=0 gox -ldflags "-X main.version=$(VERSION) -X main.gitrev=$(GITREV) -X main.builddate=`date -u +%Y-%m-%dT%H:%M:%SZ`" -output "dist/$(TARGET)-{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
 	ghr -u erasche -replace $(VERSION) dist/
 
 .PHONY: clean
