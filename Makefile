@@ -40,6 +40,7 @@ clean:
 	$(RM) $(TARGET)
 
 release:
+	git push --tags
 	rm -rf dist/
 	mkdir dist
 	go get github.com/mitchellh/gox
