@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	version     = "1.3.1"
+	version     = "1.3.2"
 	hostname, _ = os.Hostname()
 	builddate   string
 	gitrev      string
@@ -134,8 +134,8 @@ func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
 
 func serve(listenAddr, prefix string) {
 	r := mux.NewRouter()
-	r.HandleFunc("/", redir)
 	r.HandleFunc(prefix+"/", infoPage)
+	r.HandleFunc("/", redir)
 	r.HandleFunc(prefix+"/{type}/{data}", barcodeDisplayer)
 	r.HandleFunc(prefix+"/i/{type}/{data}.png", barcodeEncoder)
 	r.HandleFunc(prefix+"/healthcheck", healthCheck)
@@ -159,8 +159,8 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "prefix, p",
-			Value:  "/barcodes",
-			Usage:  "URL Path prefix",
+			Value:  "",
+			Usage:  "URL Path prefix, e.g. /barcodes",
 			EnvVar: "BARCODE_LISTEN_PREFIX",
 		},
 	}
