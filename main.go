@@ -21,6 +21,7 @@ var (
 	hostname, _ = os.Hostname()
 	builddate   string
 	gitrev      string
+	prefix      string
 )
 
 func infoPage(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +59,10 @@ func qrQuality(qualityLevel string) qr.ErrorCorrectionLevel {
 	}
 	// default to lowest setting
 	return qr.L
+}
+
+func redir(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, prefix, http.StatusSeeOther)
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +134,8 @@ func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
 
 func serve(listenAddr, prefix string) {
 	r := mux.NewRouter()
-	r.HandleFunc(prefix+"/", infoPage)
+	r.HandleFunc("/", redir)
+	r.HandleFunc(prefix, infoPage)
 	r.HandleFunc(prefix+"/{type}/{data}", barcodeDisplayer)
 	r.HandleFunc(prefix+"/i/{type}/{data}.png", barcodeEncoder)
 	r.HandleFunc(prefix+"/healthcheck", healthCheck)
@@ -157,6 +163,7 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) {
+		prefix = c.String("prefix")
 		serve(
 			c.String("listen"),
 			c.String("prefix"),
