@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	version     = "1.3.2"
+	version     = "1.3.3"
 	hostname, _ = os.Hostname()
 	builddate   string
 	gitrev      string
@@ -139,6 +139,7 @@ func serve(listenAddr, prefix string) {
 	r.HandleFunc(prefix+"/{type}/{data}", barcodeDisplayer)
 	r.HandleFunc(prefix+"/i/{type}/{data}.png", barcodeEncoder)
 	r.HandleFunc(prefix+"/healthcheck", healthCheck)
+	r.HandleFunc("/healthcheck", healthCheck)
 	fmt.Printf("Listening on %s%s\n", listenAddr, prefix)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 	log.Fatal(http.ListenAndServe(listenAddr, loggedRouter))
