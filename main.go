@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	version     = "1.2"
+	version     = "1.3"
 	hostname, _ = os.Hostname()
 	builddate   string
 	gitrev      string
