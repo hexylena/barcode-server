@@ -45,6 +45,6 @@ release:
 	go get github.com/mitchellh/gox
 	go get github.com/tcnksm/ghr
 	CGO_ENABLED=0 gox -ldflags "-X main.version=$(VERSION) -X main.gitrev=$(GITREV) -X main.builddate=`date -u +%s`" -output "dist/$(TARGET)-{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
-	#ghr -u erasche -replace $(VERSION) dist/
+	ghr -u erasche -replace $(VERSION) dist/
 
 .PHONY: clean
