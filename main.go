@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	version     = "1.3"
+	version     = "1.3.1"
 	hostname, _ = os.Hostname()
 	builddate   string
 	gitrev      string
@@ -152,14 +152,16 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "listen, l",
-			Value: "0.0.0.0:8080",
-			Usage: "Address to listen on",
+			Name:   "listen, l",
+			Value:  "0.0.0.0:8080",
+			Usage:  "Address to listen on",
+			EnvVar: "BARCODE_LISTEN_ADDRESS",
 		},
 		cli.StringFlag{
-			Name:  "prefix, p",
-			Value: "/barcodes",
-			Usage: "URL Path prefix",
+			Name:   "prefix, p",
+			Value:  "/barcodes",
+			Usage:  "URL Path prefix",
+			EnvVar: "BARCODE_LISTEN_PREFIX",
 		},
 	}
 	app.Action = func(c *cli.Context) {
