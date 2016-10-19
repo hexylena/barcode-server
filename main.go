@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	version     = "1.0"
+	version     = "1.1"
 	hostname, _ = os.Hostname()
 	builddate   string
 )
@@ -57,6 +57,10 @@ func qrQuality(qualityLevel string) qr.ErrorCorrectionLevel {
 	}
 	// default to lowest setting
 	return qr.L
+}
+
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "OK")
 }
 
 func barcodeEncoder(w http.ResponseWriter, r *http.Request) {
@@ -127,6 +131,7 @@ func serve(listenAddr string) {
 	r.HandleFunc("/", infoPage)
 	r.HandleFunc("/{type}/{data}", barcodeDisplayer)
 	r.HandleFunc("/i/{type}/{data}.png", barcodeEncoder)
+	r.HandleFunc("/healthcheck", healthCheck)
 	fmt.Printf("Listening on %s\n", listenAddr)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
 	log.Fatal(http.ListenAndServe(listenAddr, loggedRouter))
