@@ -1,5 +1,5 @@
 FROM golang:1.5
-MAINTAINER Eric Rasche <esr@tamu.edu>
+MAINTAINER Helena Rasche <hxr@hx42.org>
 EXPOSE 80
 
 ENV GIT_REV 93018954e78f7afc2157de9c4df7cc24afc1f333
